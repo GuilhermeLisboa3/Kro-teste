@@ -10,9 +10,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/module-alias": "^2.0.2",
     "typescript": "^5.2.2"
   },
   "engines": {
     "node": "18.x"
+  },
+  "dependencies": {
+    "module-alias": "^2.2.3"
   }
 }
