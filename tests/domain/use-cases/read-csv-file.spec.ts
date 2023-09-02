@@ -1,5 +1,5 @@
 import { contractParams } from '@/tests/mocks'
-import { type ReadCsvFile, type CpfValidator, type CnpjValidator } from '@/domain/contracts/gateways'
+import { type ReadCsvFile, type CpfValidator, type CnpjValidator, type ConvertReal } from '@/domain/contracts/gateways'
 import { type GetDataCsv, getDataCsvUseCase } from '@/domain/use-cases'
 
 import { mock } from 'jest-mock-extended'
@@ -11,13 +11,14 @@ describe('GetDataCsv', () => {
 
   const fileCsv = mock<ReadCsvFile>()
   const validator = mock<CpfValidator & CnpjValidator>()
+  const convert = mock<ConvertReal>()
 
   beforeAll(() => {
     fileCsv.readFile.mockResolvedValue([contract])
   })
 
   beforeEach(() => {
-    sut = getDataCsvUseCase(fileCsv, validator)
+    sut = getDataCsvUseCase(fileCsv, validator, convert)
   })
 
   it('should call ReadCsvFile', async () => {
@@ -49,5 +50,12 @@ describe('GetDataCsv', () => {
 
     expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 418542747613 })
     expect(validator.cnpjValidator).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call ConvertReal with correct value', async () => {
+    await sut()
+
+    expect(convert.real).toHaveBeenCalledWith({ value: 83720.19 })
+    expect(convert.real).toHaveBeenCalledTimes(8)
   })
 })
