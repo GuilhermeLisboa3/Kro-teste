@@ -1,5 +1,5 @@
 import { contractParams } from '@/tests/mocks'
-import { type ReadCsvFile, type CpfValidator } from '@/domain/contracts/gateways'
+import { type ReadCsvFile, type CpfValidator, type CnpjValidator } from '@/domain/contracts/gateways'
 import { type GetDataCsv, getDataCsvUseCase } from '@/domain/use-cases'
 
 import { mock } from 'jest-mock-extended'
@@ -10,7 +10,7 @@ describe('GetDataCsv', () => {
   const error = new Error('error')
 
   const fileCsv = mock<ReadCsvFile>()
-  const validator = mock<CpfValidator>()
+  const validator = mock<CpfValidator & CnpjValidator>()
 
   beforeAll(() => {
     fileCsv.readFile.mockResolvedValue([contract])
@@ -38,7 +38,16 @@ describe('GetDataCsv', () => {
   it('should call CpfValidator with correct value', async () => {
     await sut()
 
-    expect(validator.validate).toHaveBeenCalledWith({ cpf: contract.nrCpfCnpj })
-    expect(validator.validate).toHaveBeenCalledTimes(1)
+    expect(validator.cpfValidator).toHaveBeenCalledWith({ cpf: contract.nrCpfCnpj })
+    expect(validator.cpfValidator).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call CnpjValidator with correct value', async () => {
+    fileCsv.readFile.mockResolvedValueOnce([{ ...contract, nrCpfCnpj: 418542747613 }])
+
+    await sut()
+
+    expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 418542747613 })
+    expect(validator.cnpjValidator).toHaveBeenCalledTimes(1)
   })
 })
