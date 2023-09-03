@@ -1,4 +1,5 @@
 export type Contract = {
+  [key: string]: any
   nrInst: number
   nrAgencia: number
   cdClient: number
