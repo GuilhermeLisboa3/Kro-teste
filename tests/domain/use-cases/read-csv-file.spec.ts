@@ -14,11 +14,14 @@ describe('GetDataCsv', () => {
   const convert = mock<ConvertReal & ConvertDate>()
 
   beforeAll(() => {
-    fileCsv.readFile.mockResolvedValue([contract])
-    convert.real.mockResolvedValue(10)
+    validator.cpfValidator.mockResolvedValue(true)
+    validator.cnpjValidator.mockResolvedValue(true)
+    convert.real.mockResolvedValue('R$ 10,00')
+    convert.date.mockResolvedValue(new Date('2022-12-10'))
   })
 
   beforeEach(() => {
+    fileCsv.readFile.mockResolvedValue([{ ...contract }])
     sut = getDataCsvUseCase(fileCsv, validator, convert)
   })
 

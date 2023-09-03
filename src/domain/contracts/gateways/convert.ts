@@ -4,7 +4,7 @@ export interface ConvertReal {
 
 export namespace ConvertReal {
   export type Input = { value: number }
-  export type Output = number
+  export type Output = string
 }
 
 export interface ConvertDate {

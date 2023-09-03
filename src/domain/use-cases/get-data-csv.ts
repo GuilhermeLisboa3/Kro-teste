@@ -8,21 +8,25 @@ export type GetDataCsv = () => Promise<Output>
 export const getDataCsvUseCase: Setup = (fileCsv, validator, convert) => async () => {
   const contracts = await fileCsv.readFile()
   contracts.forEach(async (contract) => {
-    Object.keys(contract)
-      .forEach(async (key) => {
-        if (key.startsWith('vl')) {
-          const value = contract[key]
-          contract[key] = await convert.real({ value })
-        }
-        if (key.startsWith('dt')) {
-          const value = contract[key]
-          await convert.date({ value })
-        }
-      })
+    let isValid = false
     if (contract.nrCpfCnpj.toString().length === 11) {
-      await validator.cpfValidator({ cpf: contract.nrCpfCnpj })
+      isValid = await validator.cpfValidator({ cpf: contract.nrCpfCnpj })
     } else {
-      await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj })
+      isValid = await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj })
+    }
+    const isValidProvision = contract.vlTotal / contract.qtPrestacoes === contract.vlPresta
+    if (isValid && isValidProvision) {
+      Object.keys(contract)
+        .forEach(async (key) => {
+          if (key.startsWith('vl')) {
+            const value = contract[key]
+            contract[key] = await convert.real({ value })
+          }
+          if (key.startsWith('dt')) {
+            const value = contract[key]
+            await convert.date({ value })
+          }
+        })
     }
   })
 }
