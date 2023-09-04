@@ -35,4 +35,12 @@ describe('ConvertAdapter', () => {
       expect(result).toEqual('R$ 300,00')
     })
   })
+
+  describe('date', () => {
+    const value = 20240320
+    it('should return data formart pt-br', async () => {
+      const result = await sut.date({ value })
+      expect(result).toEqual('20/03/2024')
+    })
+  })
 })
