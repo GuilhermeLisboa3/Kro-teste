@@ -1,14 +1,15 @@
 import { type ReadCsvFile, type CpfValidator, type CnpjValidator, type ConvertReal, type ConvertDate } from '@/domain/contracts/gateways'
-import { type Contract } from '@/domain/models'
+import { type ContractInput, type ContractOutput } from '@/domain/models'
 
-type Setup = (fileCsv: ReadCsvFile<Contract[]>, validator: CpfValidator & CnpjValidator, convert: ConvertReal & ConvertDate) => GetDataCsv
-type Output = void
+type Setup = (fileCsv: ReadCsvFile<ContractInput[]>, validator: CpfValidator & CnpjValidator, convert: ConvertReal & ConvertDate) => GetDataCsv
+type Output = ContractOutput[]
 export type GetDataCsv = () => Promise<Output>
 
 export const getDataCsvUseCase: Setup = (fileCsv, validator, convert) => async () => {
   const contracts = await fileCsv.readFile()
-  contracts.forEach(async (contract) => {
+  const listContract = contracts.map(async (contract) => {
     let isValid = false
+    const contractValid: ContractOutput = contract
     if (contract.nrCpfCnpj.toString().length === 11) {
       isValid = await validator.cpfValidator({ cpf: contract.nrCpfCnpj })
     } else {
@@ -20,13 +21,15 @@ export const getDataCsvUseCase: Setup = (fileCsv, validator, convert) => async (
         .forEach(async (key) => {
           if (key.startsWith('vl')) {
             const value = contract[key]
-            contract[key] = await convert.real({ value })
+            contractValid[key] = await convert.real({ value })
           }
           if (key.startsWith('dt')) {
             const value = contract[key]
-            await convert.date({ value })
+            contractValid[key] = await convert.date({ value })
           }
         })
     }
+    return contractValid
   })
+  return await Promise.all(listContract)
 }

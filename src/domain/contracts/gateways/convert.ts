@@ -13,5 +13,5 @@ export interface ConvertDate {
 
 export namespace ConvertDate {
   export type Input = { value: number }
-  export type Output = Date
+  export type Output = string
 }
