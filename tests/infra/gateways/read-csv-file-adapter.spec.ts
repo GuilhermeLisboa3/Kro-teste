@@ -25,7 +25,7 @@ describe('ReadCsvFileAdapter', () => {
   it('should call createReadStream with correct values', async () => {
     await sut.readFile()
 
-    expect(fakeFs.createReadStream).toHaveBeenCalledWith('data.csv')
+    expect(fakeFs.createReadStream).toHaveBeenCalledWith('./data/data.csv')
     expect(fakeFs.createReadStream).toHaveBeenCalledTimes(1)
   })
 
