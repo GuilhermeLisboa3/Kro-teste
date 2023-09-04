@@ -5,6 +5,10 @@ describe('GetDataCsvController', () => {
   let sut: GetDataCsvController
   const getDataCsv = jest.fn()
 
+  beforeAll(() => {
+    getDataCsv.mockResolvedValue([{ any: 'any' }])
+  })
+
   beforeEach(() => {
     sut = new GetDataCsvController(getDataCsv)
   })
@@ -22,5 +26,12 @@ describe('GetDataCsvController', () => {
 
     expect(statusCode).toBe(500)
     expect(data).toEqual(new ServerError())
+  })
+
+  it('should return ok on success', async () => {
+    const { statusCode, data } = await sut.handle()
+
+    expect(statusCode).toBe(200)
+    expect(data).toEqual([{ any: 'any' }])
   })
 })
