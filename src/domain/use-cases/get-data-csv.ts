@@ -1,35 +1,36 @@
 import { type ReadCsvFile, type CpfValidator, type CnpjValidator, type ConvertReal, type ConvertDate } from '@/domain/contracts/gateways'
-import { type ContractInput, type ContractOutput } from '@/domain/models'
+import { type ContractInput } from '@/domain/models'
 
 type Setup = (fileCsv: ReadCsvFile<ContractInput[]>, validator: CpfValidator & CnpjValidator, convert: ConvertReal & ConvertDate) => GetDataCsv
-type Output = ContractOutput[]
+type Output = any
 export type GetDataCsv = () => Promise<Output>
 
 export const getDataCsvUseCase: Setup = (fileCsv, validator, convert) => async () => {
   const contracts = await fileCsv.readFile()
-  const listContract = contracts.map(async (contract) => {
+  const listContracts: any[] = []
+  contracts.map(async (contract) => {
     let isValid = false
-    const contractValid: ContractOutput = contract
     if (contract.nrCpfCnpj.toString().length === 11) {
       isValid = await validator.cpfValidator({ cpf: contract.nrCpfCnpj })
     } else {
-      isValid = await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj })
+      isValid = await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj + contract.nrAgencia })
     }
-    const isValidProvision = contract.vlTotal / contract.qtPrestacoes === contract.vlPresta
-    if (isValid && isValidProvision) {
+    if (isValid) {
+      const isValidProvision = contract.vlTotal / contract.qtPrestacoes
+      if (isValidProvision !== contract.vlPresta) contract.vlPresta = isValidProvision
       Object.keys(contract)
-        .forEach(async (key) => {
+        .map(async (key) => {
           if (key.startsWith('vl')) {
             const value = contract[key]
-            contractValid[key] = await convert.real({ value })
+            contract[key] = await convert.real({ value })
           }
           if (key.startsWith('dt')) {
             const value = contract[key]
-            contractValid[key] = await convert.date({ value })
+            contract[key] = await convert.date({ value })
           }
         })
+      listContracts.push(contract)
     }
-    return contractValid
   })
-  return await Promise.all(listContract)
+  return listContracts
 }

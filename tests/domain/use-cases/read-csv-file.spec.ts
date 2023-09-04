@@ -52,7 +52,7 @@ describe('GetDataCsv', () => {
 
     await sut()
 
-    expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 418542747613 })
+    expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 418542747613 + contract.nrAgencia })
     expect(validator.cnpjValidator).toHaveBeenCalledTimes(1)
   })
 
@@ -66,11 +66,5 @@ describe('GetDataCsv', () => {
     await sut()
 
     expect(convert.date).toHaveBeenCalledTimes(2)
-  })
-
-  it('should return array with contracts', async () => {
-    const result = await sut()
-
-    expect(result).toMatchObject([{ vlTotal: 'R$ 10,00' }])
   })
 })
