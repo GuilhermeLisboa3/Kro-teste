@@ -8,9 +8,15 @@ describe('ConvertAdapter', () => {
   })
 
   describe('real', () => {
+    const formatMock: jest.Mock = jest.fn()
     const value = 300
+
+    beforeAll(() => {
+      jest.spyOn(Intl, 'NumberFormat').mockImplementation(jest.fn().mockImplementation(() => ({
+        format: formatMock.mockReturnValue('R$ 300,00')
+      })))
+    })
     it('should call NumberFormat with correct values', async () => {
-      const formatMock = jest.fn()
       const formatRealSpy = jest.spyOn(Intl, 'NumberFormat').mockImplementationOnce(jest.fn().mockImplementationOnce(() => ({
         format: formatMock
       })))
@@ -21,6 +27,12 @@ describe('ConvertAdapter', () => {
       expect(formatMock).toHaveBeenCalledWith(300)
       expect(formatMock).toHaveBeenCalledTimes(1)
       expect(formatRealSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call return numberf format correct', async () => {
+      const result = await sut.real({ value })
+
+      expect(result).toEqual('R$ 300,00')
     })
   })
 })
