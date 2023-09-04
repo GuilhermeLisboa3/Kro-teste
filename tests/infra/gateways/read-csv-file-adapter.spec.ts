@@ -11,9 +11,7 @@ describe('ReadCsvFileAdapter', () => {
   const fakeFs = fs as jest.Mocked<typeof fs>
   const mReadStream = {
     pipe: jest.fn().mockReturnThis(),
-    on: jest.fn().mockImplementation(function (event, handler) {
-      handler()
-    })
+    on: jest.fn().mockReturnThis()
   }
 
   beforeAll(() => {
@@ -36,5 +34,12 @@ describe('ReadCsvFileAdapter', () => {
 
     expect(mReadStream.pipe).toHaveBeenCalledTimes(1)
     expect(csv).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call on', async () => {
+    await sut.readFile()
+
+    expect(mReadStream.on).toBeCalledWith('data', expect.any(Function))
+    expect(mReadStream.on).toBeCalledWith('end', expect.any(Function))
   })
 })
