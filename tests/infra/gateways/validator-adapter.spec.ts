@@ -61,5 +61,13 @@ describe('ValidatorAdapter', () => {
 
       expect(result).toBeTruthy()
     })
+
+    it('should return false if cnpj is not valid', async () => {
+      fakeCnpj.isValid.mockReturnValueOnce(false)
+
+      const result = await sut.cnpjValidator({ cnpj })
+
+      expect(result).toBeFalsy()
+    })
   })
 })
