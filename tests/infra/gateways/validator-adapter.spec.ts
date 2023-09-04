@@ -31,5 +31,13 @@ describe('ValidatorAdapter', () => {
 
       expect(result).toBeTruthy()
     })
+
+    it('should return false if cpf is not valid', async () => {
+      fakeCpf.isValid.mockReturnValueOnce(false)
+
+      const result = await sut.cpfValidator({ cpf })
+
+      expect(result).toBeFalsy()
+    })
   })
 })
