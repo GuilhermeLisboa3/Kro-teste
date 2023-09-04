@@ -9,6 +9,7 @@
 01. Make a clone of this repository;
 00. Enter the folder by running `cd Kro-teste`;
 00. Run `npm install` to install dependencies;
+1. 00. Run `npm run dev` to start;
 00. Go to `http://localhost:3333/filecsv/` to open the documentation;
 
 <br />
