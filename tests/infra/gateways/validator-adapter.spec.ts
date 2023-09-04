@@ -15,11 +15,21 @@ describe('ValidatorAdapter', () => {
   describe('cpf', () => {
     const cpf = 55093829810
 
-    it('should call createReadStream with correct values', async () => {
+    beforeAll(() => {
+      fakeCpf.isValid.mockReturnValue(true)
+    })
+
+    it('should call cpf.isValid with correct values', async () => {
       await sut.cpfValidator({ cpf })
 
       expect(fakeCpf.isValid).toHaveBeenCalledWith('55093829810')
       expect(fakeCpf.isValid).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return true if cpf is valid', async () => {
+      const result = await sut.cpfValidator({ cpf })
+
+      expect(result).toBeTruthy()
     })
   })
 })
