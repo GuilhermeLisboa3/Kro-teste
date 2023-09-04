@@ -17,7 +17,7 @@ describe('GetDataCsv', () => {
     validator.cpfValidator.mockResolvedValue(true)
     validator.cnpjValidator.mockResolvedValue(true)
     convert.real.mockResolvedValue('R$ 10,00')
-    convert.date.mockResolvedValue(new Date('2022-12-10'))
+    convert.date.mockResolvedValue('2022/12/10')
   })
 
   beforeEach(() => {
@@ -66,5 +66,11 @@ describe('GetDataCsv', () => {
     await sut()
 
     expect(convert.date).toHaveBeenCalledTimes(2)
+  })
+
+  it('should return array with contracts', async () => {
+    const result = await sut()
+
+    expect(result).toMatchObject([{ vlTotal: 'R$ 10,00' }])
   })
 })
