@@ -1,7 +1,9 @@
+import { type ReadCsvFile } from '@/domain/contracts/gateways'
+
 import { createReadStream } from 'fs'
 import csv from 'csv-parser'
 
-export class ReadCsvFileAdapter {
+export class ReadCsvFileAdapter implements ReadCsvFile {
   async readFile (): Promise<any> {
     const results: any[] = []
     createReadStream('data.csv')

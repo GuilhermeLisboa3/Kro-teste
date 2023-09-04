@@ -36,6 +36,7 @@
     "node": "18.x"
   },
   "dependencies": {
+    "cpf-cnpj-validator": "^1.0.3",
     "csv-parser": "^3.0.0",
     "module-alias": "^2.2.3"
   }
