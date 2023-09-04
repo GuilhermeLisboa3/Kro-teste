@@ -45,11 +45,21 @@ describe('ValidatorAdapter', () => {
   describe('fakeCnpj', () => {
     const cnpj = 55093829810
 
+    beforeAll(() => {
+      fakeCnpj.isValid.mockReturnValue(true)
+    })
+
     it('should call cnpj.isValid with correct values', async () => {
       await sut.cnpjValidator({ cnpj })
 
       expect(fakeCnpj.isValid).toHaveBeenCalledWith('55093829810')
       expect(fakeCnpj.isValid).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return true if cnpj is valid', async () => {
+      const result = await sut.cnpjValidator({ cnpj })
+
+      expect(result).toBeTruthy()
     })
   })
 })
