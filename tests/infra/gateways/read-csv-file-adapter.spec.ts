@@ -1,12 +1,24 @@
 import { ReadCsvFileAdapter } from '@/infra/gateways'
 
 import fs from 'fs'
+import csv from 'csv-parser'
 
 jest.mock('fs')
+jest.mock('csv-parser')
 
 describe('ReadCsvFileAdapter', () => {
   let sut: ReadCsvFileAdapter
   const fakeFs = fs as jest.Mocked<typeof fs>
+  const mReadStream = {
+    pipe: jest.fn().mockReturnThis(),
+    on: jest.fn().mockImplementation(function (event, handler) {
+      handler()
+    })
+  }
+
+  beforeAll(() => {
+    fakeFs.createReadStream.mockImplementation(jest.fn().mockImplementation(() => (mReadStream)))
+  })
 
   beforeEach(() => {
     sut = new ReadCsvFileAdapter()
@@ -17,5 +29,12 @@ describe('ReadCsvFileAdapter', () => {
 
     expect(fakeFs.createReadStream).toHaveBeenCalledWith('data.csv')
     expect(fakeFs.createReadStream).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call csv-parse', async () => {
+    await sut.readFile()
+
+    expect(mReadStream.pipe).toHaveBeenCalledTimes(1)
+    expect(csv).toHaveBeenCalledTimes(1)
   })
 })
