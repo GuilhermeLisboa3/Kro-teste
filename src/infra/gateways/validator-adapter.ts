@@ -2,8 +2,8 @@ import { type CpfValidator } from '@/domain/contracts/gateways'
 
 import { cpf } from 'cpf-cnpj-validator'
 
-export class ValidatorAdapter {
-  async cpfValidator (input: CpfValidator.Input): Promise<any> {
-    cpf.isValid(input.cpf.toString())
+export class ValidatorAdapter implements CpfValidator {
+  async cpfValidator (input: CpfValidator.Input): Promise<CpfValidator.Output> {
+    return cpf.isValid(input.cpf.toString())
   }
 }
