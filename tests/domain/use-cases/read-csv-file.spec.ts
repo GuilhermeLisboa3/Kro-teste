@@ -48,11 +48,11 @@ describe('GetDataCsv', () => {
   })
 
   it('should call CnpjValidator with correct value', async () => {
-    fileCsv.readFile.mockResolvedValueOnce([{ ...contract, nrCpfCnpj: 418542747613 }])
+    fileCsv.readFile.mockResolvedValueOnce([{ ...contract, nrCpfCnpj: 41854274761323 }])
 
     await sut()
 
-    expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 418542747613 + contract.nrAgencia })
+    expect(validator.cnpjValidator).toHaveBeenCalledWith({ cnpj: 41854274761323 })
     expect(validator.cnpjValidator).toHaveBeenCalledTimes(1)
   })
 

@@ -12,8 +12,8 @@ export const getDataCsvUseCase: Setup = (fileCsv, validator, convert) => async (
     let isValid = false
     if (contract.nrCpfCnpj.toString().length === 11) {
       isValid = await validator.cpfValidator({ cpf: contract.nrCpfCnpj })
-    } else {
-      isValid = await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj + contract.nrAgencia })
+    } else if (contract.nrCpfCnpj.toString().length === 14) {
+      isValid = await validator.cnpjValidator({ cnpj: contract.nrCpfCnpj })
     }
     if (isValid) {
       const isValidProvision = contract.vlTotal / contract.qtPrestacoes
